@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wg-forward-manager"
+version = "1.0.2"
+description = "WireGuard forward manager for one Front VPS and multiple Main VPS servers"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["PyYAML>=6.0"]
+
+[project.scripts]
+wgfm = "wgfm.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}

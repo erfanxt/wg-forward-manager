@@ -1,0 +1,11 @@
+[Unit]
+Description=WG Forward Manager reconcile timer
+
+[Timer]
+OnBootSec=20
+OnUnitActiveSec=60
+Persistent=true
+Unit=wgfm-reconcile.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create package directory
+        run: |
+          mkdir release
+          rsync -a \
+            --exclude ".git" \
+            --exclude ".github" \
+            ./ release/wg-forward-manager/
+
+      - name: Create tar.gz
+        run: |
+          cd release
+          tar -czf ../wg-forward-manager-${{ github.ref_name }}.tar.gz wg-forward-manager
+
+      - name: Create zip
+        run: |
+          cd release
+          zip -r ../wg-forward-manager-${{ github.ref_name }}.zip wg-forward-manager
+
+      - name: Generate SHA256
+        run: |
+          sha256sum wg-forward-manager-${{ github.ref_name }}.tar.gz > wg-forward-manager-${{ github.ref_name }}.tar.gz.sha256
+          sha256sum wg-forward-manager-${{ github.ref_name }}.zip > wg-forward-manager-${{ github.ref_name }}.zip.sha256
+
+      - name: Publish Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            wg-forward-manager-${{ github.ref_name }}.tar.gz
+            wg-forward-manager-${{ github.ref_name }}.zip
+            wg-forward-manager-${{ github.ref_name }}.tar.gz.sha256
+            wg-forward-manager-${{ github.ref_name }}.zip.sha256
