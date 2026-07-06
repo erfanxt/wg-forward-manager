@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3
+- Fixed nftables rule generation for Ubuntu 24.04 / nftables inet tables by using `dnat ip to`.
+- Added preflight validation (`nft -c -f`) before replacing the active wg_forward table.
+- Prevented config loss by keeping existing nftables rules until generated rules validate successfully.
+
 ## 1.0.2
 - Fixed installer ordering so WireGuard config exists before service startup.
 - Made nftables cleanup safe when the table does not exist.
@@ -9,6 +14,11 @@
 - Added validation for IPs, CIDRs, ports, and installer prompts.
 
 # Changelog
+
+## 1.0.3
+- Fixed nftables rule generation for Ubuntu 24.04 / nftables inet tables by using `dnat ip to`.
+- Added preflight validation (`nft -c -f`) before replacing the active wg_forward table.
+- Prevented config loss by keeping existing nftables rules until generated rules validate successfully.
 
 ## 1.0.0
 - Initial modular release

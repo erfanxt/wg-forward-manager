@@ -3,6 +3,7 @@ from __future__ import annotations
 from .constants import RULES_FILE
 from .utils import atomic_write, run
 from .logger import log
+from .errors import ConfigError
 
 
 def render_front_rules(cfg: dict) -> str:
@@ -19,7 +20,7 @@ def render_front_rules(cfg: dict) -> str:
         main = mains.get(main_name)
         if not main:
             continue
-        lines.append(f'    tcp dport {port_str} dnat to {main["wg_ip"]}:{port_str}')
+        lines.append(f'    tcp dport {port_str} dnat ip to {main["wg_ip"]}:{port_str}')
     lines += [
         "  }",
         "",
@@ -46,9 +47,20 @@ def _delete_table_if_present() -> None:
         run(["nft", "delete", "table", "inet", "wg_forward"], check=False)
 
 
+def _validate_rules_file(path: str) -> None:
+    result = run(["nft", "-c", "-f", path], capture=True, check=False)
+    if result.returncode != 0:
+        details = (result.stderr or result.stdout or "").strip()
+        raise ConfigError(
+            "Generated nftables rules are invalid. "
+            + (details if details else f"See {path} for the generated rules.")
+        )
+
+
 def apply_front(cfg: dict) -> None:
     log("Applying nftables front rules")
     atomic_write(RULES_FILE, render_front_rules(cfg), 0o600)
+    _validate_rules_file(str(RULES_FILE))
     _delete_table_if_present()
     run(["nft", "-f", str(RULES_FILE)])
     if not cfg.get("routes"):

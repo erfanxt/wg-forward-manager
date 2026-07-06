@@ -1,7 +1,7 @@
 from pathlib import Path
 
 APP_NAME = "WG Forward Manager"
-APP_VERSION = "1.0.2"
+APP_VERSION = "1.0.3"
 REPO_OWNER = "erfanxt"
 REPO_NAME = "wg-forward-manager"
 
